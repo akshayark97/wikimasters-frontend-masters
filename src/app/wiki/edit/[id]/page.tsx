@@ -1,4 +1,5 @@
 import WikiEditor from "@/components/wiki-editor";
+import { stackServerApp } from "@/stack/server";
 
 interface EditArticlePageProps {
   params: Promise<{
@@ -10,6 +11,14 @@ export default async function EditArticlePage({
   params,
 }: EditArticlePageProps) {
   const { id } = await params;
+
+  const user = await stackServerApp.getUser({ or: 'redirect' })
+  
+  // we'll uncomment this later when the articles have real IDs
+  if(user.id !== id) {
+    stackServerApp.redirectToHome()
+  }
+
 
   // In a real app, you would fetch the article data here
   // For now, we'll just show some mock data if it's not "new"

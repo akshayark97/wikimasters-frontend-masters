@@ -1,5 +1,6 @@
 "use server";
 
+import { stackServerApp } from "@/stack/server";
 import { redirect } from "next/navigation";
 
 export type CreateArticleInput = {
@@ -16,6 +17,11 @@ export type UpdateArticleInput = {
 };
 
 export async function createArticle(data: CreateArticleInput) {
+  const user = stackServerApp.getUser();
+  if (!user) {
+    throw new Error("❌ Unauthorized");
+  }
+
   // TODO: Replace with actual database call
   console.log("✨ createArticle called:", data);
   return { success: true, message: "Article create logged (stub)" };
