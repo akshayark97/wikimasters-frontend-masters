@@ -1,11 +1,12 @@
 "use server";
 
-import { stackServerApp } from "@/stack/server";
+import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { ensureUserExists } from "@/db/sync-user";
+import { authorizeUserToEditArticle } from "@/db/authz";
 import db from "@/db/index";
 import { articles } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { ensureUserExists } from "@/db/sync-user";
+import { stackServerApp } from "@/stack/server";
 
 export type CreateArticleInput = {
   title: string;
@@ -53,6 +54,12 @@ export async function updateArticle(id: string, data: UpdateArticleInput) {
     throw new Error("❌ Unauthorized");
   }
 
+  if (!(await authorizeUserToEditArticle(user.id, +id))) {
+    throw new Error(
+      "❌ Forbidden: You do not have permission to edit this article.",
+    );
+  }
+
   console.log("📝 updateArticle called:", { id, ...data });
 
   const _response = await db
@@ -70,6 +77,12 @@ export async function deleteArticle(id: string) {
   const user = await stackServerApp.getUser();
   if (!user) {
     throw new Error("❌ Unauthorized");
+  }
+
+  if (!(await authorizeUserToEditArticle(user.id, +id))) {
+    throw new Error(
+      "❌ Forbidden: You do not have permission to delete this article.",
+    );
   }
 
   console.log("🗑️ deleteArticle called:", id);

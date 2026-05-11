@@ -1,5 +1,5 @@
-import { usersSync } from "@/db/schema";
 import db from "@/db/index";
+import { usersSync } from "@/db/schema";
 
 type StackUser = {
   id: string;
