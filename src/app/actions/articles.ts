@@ -2,7 +2,6 @@
 
 import { stackServerApp } from "@/stack/server";
 import { redirect } from "next/navigation";
-import { stackServerApp } from "@/stack/server";
 import { ensureUserExists } from "@/db/sync-user";
 
 // Server actions for articles (stubs)
