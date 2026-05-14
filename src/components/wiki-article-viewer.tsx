@@ -21,7 +21,6 @@ interface ViewerArticle {
 interface WikiArticleViewerProps {
   article: ViewerArticle;
   canEdit?: boolean;
-  pageviews?: number | null;
 }
 
 export default function WikiArticleViewer({
@@ -70,9 +69,7 @@ export default function WikiArticleViewer({
               <Calendar className="h-4 w-4 mr-1" />
               <span>{formatDate(article.createdAt)}</span>
             </div>
-            <div className="flex items-center">
-              <Badge variant="secondary">Article</Badge>
-            </div>
+            <Badge variant="secondary">Article</Badge>
           </div>
         </div>
 

@@ -40,6 +40,7 @@ export async function createArticle(data: CreateArticleInput) {
       slug: `${Date.now()}`,
       published: true,
       authorId: user.id,
+      imageUrl: data.imageUrl ?? undefined
     })
     .returning({ id: articles.id });
 
@@ -67,6 +68,7 @@ export async function updateArticle(id: string, data: UpdateArticleInput) {
     .set({
       title: data.title,
       content: data.content,
+      imageUrl: data.imageUrl ?? undefined
     })
     .where(eq(articles.id, +id));
 
