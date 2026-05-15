@@ -8,6 +8,13 @@
       "when": 1778246643929,
       "tag": "0000_curvy_king_cobra",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1778865652334,
+      "tag": "0001_true_vanisher",
+      "breakpoints": true
     }
   ]
 }

@@ -8,6 +8,7 @@ import { articles } from "@/db/schema";
 import { ensureUserExists } from "@/db/sync-user";
 import { stackServerApp } from "@/stack/server";
 import redis from "@/cache";
+import summarizeArticle from "@/ai/summarize"
 
 export type CreateArticleInput = {
   title: string;
@@ -33,6 +34,8 @@ export async function createArticle(data: CreateArticleInput) {
   // TODO: Replace with actual database call
   console.log("✨ createArticle called:", data);
 
+  /** uncomment where you got openai api key from vercel */
+  // const summary  = await summarizeArticle(data.title || "", data.content || "");
   const response = await db
     .insert(articles)
     .values({
@@ -41,7 +44,8 @@ export async function createArticle(data: CreateArticleInput) {
       slug: `${Date.now()}`,
       published: true,
       authorId: user.id,
-      imageUrl: data.imageUrl ?? undefined
+      imageUrl: data.imageUrl ?? undefined,
+      // summary,
     })
     .returning({ id: articles.id });
 
@@ -65,12 +69,15 @@ export async function updateArticle(id: string, data: UpdateArticleInput) {
 
   console.log("📝 updateArticle called:", { id, ...data });
 
+  /** uncomment where you got openai api key from vercel */
+  // const summary = await summarizeArticle(data.title || "", data.content || "");
   const _response = await db
     .update(articles)
     .set({
       title: data.title,
       content: data.content,
-      imageUrl: data.imageUrl ?? undefined
+      imageUrl: data.imageUrl ?? undefined,
+      // summary: summary ?? undefined,
     })
     .where(eq(articles.id, +id));
 

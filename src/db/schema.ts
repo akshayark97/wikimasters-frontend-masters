@@ -6,6 +6,7 @@ export const articles = pgTable("articles", {
   slug: text("slug").notNull().unique(),
   content: text("content").notNull(),
   imageUrl: text("image_url"),
+  summary: text("summary"),
   published: boolean("published").default(false).notNull(),
   authorId: text("author_id")
     .notNull()
