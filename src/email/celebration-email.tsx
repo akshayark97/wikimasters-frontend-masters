@@ -2,6 +2,11 @@ import db from "@/db";
 import { articles, usersSync } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import resend from "@/email";
+import CelebrationTemplate from "./templates/celebration-template";
+
+const BASE_URL = process.env.BASE_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : "http://localhost:3000";
 
 export default async function sendCelebrationEmail(
   articleId: number,
@@ -11,15 +16,17 @@ export default async function sendCelebrationEmail(
     .select({
       email: usersSync.email,
       id: usersSync.id,
+      title: articles.title,
+      name: usersSync.name,
     })
     .from(articles)
     .leftJoin(usersSync, eq(articles.authorId, usersSync.id))
     .where(eq(articles.id, articleId));
 
-    // SELECT usersSync.id, usersSync.email FROM articles LEFT JOIN 
-    // usersSync ON articles.authorId = usersSync.id WHERE articles.id = $id
+  // SELECT usersSync.id, usersSync.email FROM articles LEFT JOIN
+  // usersSync ON articles.authorId = usersSync.id WHERE articles.id = $id
 
-  const { email, id } = response[0];
+  const { email, id, title, name } = response[0];
   if (!email) {
     console.log(
       `❌ skipping sending a celebration for getting ${pageviews} on article ${articleId}, could not find email`,
@@ -42,7 +49,14 @@ export default async function sendCelebrationEmail(
     from: "Wikimasters <onboarding@resend.dev>", // I believe it only lets you send from Resend if you haven't set up your domain
     to: "akshaydevadiga7.ar@gmail.com", // unless you set up your own domain, you can only email yourself
     subject: `✨ You article got ${pageviews} views! ✨`,
-    html: "<h1>Congrats!</h1><p>You're an amazing author!</p>",
+    react: (
+      <CelebrationTemplate
+        articleTitle={title}
+        articleUrl={`${BASE_URL}/wiki/${articleId}`}
+        name={name ?? "Friend"}
+        pageviews={pageviews}
+      />
+    ),
   });
 
   if (!emailRes.error) {
