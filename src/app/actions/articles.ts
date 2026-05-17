@@ -2,13 +2,12 @@
 
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import redis from "@/cache";
 import { authorizeUserToEditArticle } from "@/db/authz";
 import db from "@/db/index";
 import { articles } from "@/db/schema";
 import { ensureUserExists } from "@/db/sync-user";
 import { stackServerApp } from "@/stack/server";
-import redis from "@/cache";
-import summarizeArticle from "@/ai/summarize"
 
 export type CreateArticleInput = {
   title: string;
@@ -51,7 +50,7 @@ export async function createArticle(data: CreateArticleInput) {
 
   const articleId = response[0]?.id;
   // delete all the articles from redis cache, so that next time when we fetch the articles, it will be a cache miss and we will get the updated list of articles including the newly created one.
-  redis.del("articles:all")
+  redis.del("articles:all");
   return { success: true, message: "Article create logged", id: articleId };
 }
 

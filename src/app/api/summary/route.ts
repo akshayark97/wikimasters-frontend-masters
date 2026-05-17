@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
 import { eq, isNull } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
 import summarizeArticle from "@/ai/summarize";
+import redis from "@/cache";
 import db from "@/db";
 import { articles } from "@/db/schema";
-import redis from "@/cache";
 
 export async function GET(req: NextRequest) {
   if (
@@ -43,7 +43,6 @@ export async function GET(req: NextRequest) {
       }
     } catch (err) {
       console.error("Failed to summarize article id=", row.id, err);
-      continue;
     }
   }
 

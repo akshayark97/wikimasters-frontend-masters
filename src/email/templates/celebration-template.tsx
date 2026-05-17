@@ -12,7 +12,7 @@ const CelebrationTemplate = ({
   articleUrl,
 }: Props) => {
   return (
-    <html>
+    <html lang="en">
       <body
         style={{
           backgroundColor: "#f8fafc",
